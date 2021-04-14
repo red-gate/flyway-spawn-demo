@@ -1,0 +1,22 @@
+name: Take backup of production database daily
+
+on:
+  schedule:
+    - cron: "0 9 * * MON-FRI"
+
+  workflow_dispatch:
+
+jobs:
+  take_db_backup:
+    name: Take backup of production database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create backup
+        run: ./take-db-backup.sh
+        env:
+          SPAWNCTL_ACCESS_TOKEN: ${{ secrets.SPAWNCTL_ACCESS_TOKEN }}
+          PAGILA_HOST: ${{ secrets.PAGILA_HOST }}
+          PAGILA_USERNAME: ${{ secrets.PAGILA_ADMIN_USERNAME }}
+          PAGILA_PASSWORD: ${{ secrets.PAGILA_ADMIN_PASSWORD }}

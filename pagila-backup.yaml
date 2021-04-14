@@ -1,0 +1,11 @@
+name: Pagila
+engine: postgresql
+version: 12.0
+sourceType: backup
+backup:
+  folder: ./backups/
+  file: pagila.sql
+  format: plain
+tags:
+  - prod
+  - latest
