@@ -3,8 +3,9 @@
 set -e
 
 echo "Downloading and installing spawnctl..."
-curl -sL https://run.spawn.cc/install | sh
+curl -sL https://run.spawn.cc/install | sh > /dev/null 2>&1
 export PATH=$HOME/.spawnctl/bin:$PATH
+echo "spawnctl successfully installed"
 
 export SPAWN_PAGILA_IMAGE_NAME=Pagila:prod
 
