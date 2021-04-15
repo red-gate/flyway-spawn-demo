@@ -13,11 +13,11 @@ echo
 echo "Creating Pagila backup Spawn data container from image '$SPAWN_PAGILA_IMAGE_NAME'..."
 pagilaContainerName=$(spawnctl create data-container --image $SPAWN_PAGILA_IMAGE_NAME --lifetime 10m --accessToken $SPAWNCTL_ACCESS_TOKEN -q)
 
-pagilaJson=$(spawnctl get data-container $pagilaContainerName -o json)
-pagilaHost=$(echo $pagilaJson | jq -r '.host')
-pagilaPort=$(echo $pagilaJson | jq -r '.port')
-pagilaUser=$(echo $pagilaJson | jq -r '.user')
-pagilaPassword=$(echo $pagilaJson | jq -r '.password')
+export pagilaJson=$(spawnctl get data-container $pagilaContainerName -o json)
+export pagilaHost=$(echo $pagilaJson | jq -r '.host')
+export pagilaPort=$(echo $pagilaJson | jq -r '.port')
+export pagilaUser=$(echo $pagilaJson | jq -r '.user')
+export pagilaPassword=$(echo $pagilaJson | jq -r '.password')
 
 echo "Successfully created Spawn data container '$pagilaContainerName'"
 echo
