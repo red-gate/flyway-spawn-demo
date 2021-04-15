@@ -2,6 +2,8 @@
 
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 echo "Downloading and installing spawnctl..."
 curl -sL https://run.spawn.cc/install | sh > /dev/null 2>&1
 export PATH=$HOME/.spawnctl/bin:$PATH
@@ -28,7 +30,11 @@ docker pull flyway/flyway > /dev/null 2>&1
 echo
 echo "Starting migration of database with flyway"
 
+source $SCRIPT_DIR/migration-specific-tests/before.sh
+
 docker run --net=host --rm -v $PWD/sql:/flyway/sql flyway/flyway migrate -url="jdbc:postgresql://$pagilaHost:$pagilaPort/pagila" -user=$pagilaUser -password=$pagilaPassword
+
+source $SCRIPT_DIR/migration-specific-tests/after.sh
 
 echo "Successfully migrated 'Pagila' database"
 echo
