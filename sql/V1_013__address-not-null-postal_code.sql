@@ -1,0 +1,1 @@
+ALTER TABLE public.address ALTER COLUMN postal_code SET NOT NULL;
