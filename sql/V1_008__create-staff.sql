@@ -1,5 +1,6 @@
 CREATE TABLE public.staff (
     staff_id SERIAL PRIMARY KEY,
+    title text NULL,
     first_name text NOT NULL,
     last_name text NOT NULL,
     address_id integer NOT NULL,
