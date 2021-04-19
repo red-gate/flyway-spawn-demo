@@ -2,6 +2,8 @@
 
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 echo "Downloading and installing spawnctl..."
 curl -sL https://run.spawn.cc/install | sh > /dev/null 2>&1
 export PATH=$HOME/.spawnctl/bin:$PATH
@@ -13,11 +15,11 @@ echo
 echo "Creating Pagila backup Spawn data container from image '$SPAWN_PAGILA_IMAGE_NAME'..."
 pagilaContainerName=$(spawnctl create data-container --image $SPAWN_PAGILA_IMAGE_NAME --lifetime 10m --accessToken $SPAWNCTL_ACCESS_TOKEN -q)
 
-pagilaJson=$(spawnctl get data-container $pagilaContainerName -o json)
-pagilaHost=$(echo $pagilaJson | jq -r '.host')
-pagilaPort=$(echo $pagilaJson | jq -r '.port')
-pagilaUser=$(echo $pagilaJson | jq -r '.user')
-pagilaPassword=$(echo $pagilaJson | jq -r '.password')
+export pagilaJson=$(spawnctl get data-container $pagilaContainerName -o json)
+export pagilaHost=$(echo $pagilaJson | jq -r '.host')
+export pagilaPort=$(echo $pagilaJson | jq -r '.port')
+export pagilaUser=$(echo $pagilaJson | jq -r '.user')
+export pagilaPassword=$(echo $pagilaJson | jq -r '.password')
 
 echo "Successfully created Spawn data container '$pagilaContainerName'"
 echo
@@ -28,7 +30,11 @@ docker pull flyway/flyway > /dev/null 2>&1
 echo
 echo "Starting migration of database with flyway"
 
+source $SCRIPT_DIR/migration-specific-tests/before.sh
+
 docker run --net=host --rm -v $PWD/sql:/flyway/sql flyway/flyway migrate -url="jdbc:postgresql://$pagilaHost:$pagilaPort/pagila" -user=$pagilaUser -password=$pagilaPassword
+
+source $SCRIPT_DIR/migration-specific-tests/after.sh
 
 echo "Successfully migrated 'Pagila' database"
 echo
