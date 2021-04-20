@@ -7,11 +7,13 @@ curl -sL https://run.spawn.cc/install | sh > /dev/null 2>&1
 export PATH=$HOME/.spawnctl/bin:$PATH
 echo "spawnctl successfully installed"
 
-echo
-echo "Backing up Pagila database..."
-
 databaseName="pagila"
 mkdir backups
+
+docker pull postgres:12-alpine > /dev/null 2>&1
+
+echo
+echo "Backing up Pagila database..."
 
 docker run --net=host --rm -v $PWD/backups:/backups/ -e PGPASSWORD=$PAGILA_PASSWORD postgres:12-alpine pg_dump -h $PAGILA_HOST -p 5432 -U $PAGILA_USERNAME --create $databaseName --file /backups/pagila.sql
 
