@@ -10,9 +10,10 @@ echo "spawnctl successfully installed"
 echo
 echo "Backing up Pagila database..."
 
+databaseName="pagila"
 mkdir backups
 
-docker run --net=host --rm -v $PWD/backups:/backups/ -e PGPASSWORD=$PAGILA_PASSWORD postgres:12-alpine pg_dump -h $PAGILA_HOST -p 5432 -U $PAGILA_USERNAME --create pagila --file /backups/pagila.sql
+docker run --net=host --rm -v $PWD/backups:/backups/ -e PGPASSWORD=$PAGILA_PASSWORD postgres:12-alpine pg_dump -h $PAGILA_HOST -p 5432 -U $PAGILA_USERNAME --create $databaseName --file /backups/pagila.sql
 
 echo "Creating Spawn data image..."
 echo

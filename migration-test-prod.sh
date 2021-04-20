@@ -13,6 +13,7 @@ echo
 echo "Creating Pagila backup Spawn data container from image '$SPAWN_PAGILA_IMAGE_NAME'..."
 pagilaContainerName=$(spawnctl create data-container --image $SPAWN_PAGILA_IMAGE_NAME --lifetime 10m --accessToken $SPAWNCTL_ACCESS_TOKEN -q)
 
+databaseName="pagila"
 pagilaJson=$(spawnctl get data-container $pagilaContainerName -o json)
 pagilaHost=$(echo $pagilaJson | jq -r '.host')
 pagilaPort=$(echo $pagilaJson | jq -r '.port')
@@ -28,7 +29,7 @@ docker pull flyway/flyway > /dev/null 2>&1
 echo
 echo "Starting migration of database with flyway"
 
-docker run --net=host --rm -v $PWD/sql:/flyway/sql flyway/flyway migrate -url="jdbc:postgresql://$pagilaHost:$pagilaPort/pagila" -user=$pagilaUser -password=$pagilaPassword
+docker run --net=host --rm -v $PWD/sql:/flyway/sql flyway/flyway migrate -url="jdbc:postgresql://$pagilaHost:$pagilaPort/$databaseName" -user=$pagilaUser -password=$pagilaPassword
 
 echo "Successfully migrated 'Pagila' database"
 echo
