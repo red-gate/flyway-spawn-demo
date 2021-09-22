@@ -7,7 +7,7 @@ curl -sL https://run.spawn.cc/install | sh > /dev/null 2>&1
 export PATH=$HOME/.spawnctl/bin:$PATH
 echo "spawnctl successfully installed"
 
-export SPAWN_EMPTY_IMAGE=postgres:empty
+export SPAWN_EMPTY_IMAGE=postgres-empty
 
 echo
 echo "Creating Pagila backup Spawn data container from empty image"
