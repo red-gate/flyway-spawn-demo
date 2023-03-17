@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euxo pipefail
 
 echo "Downloading and installing spawnctl..."
 curl -sL https://run.spawn.cc/install | sh > /dev/null 2>&1
@@ -10,17 +10,17 @@ echo "spawnctl successfully installed"
 databaseName="pagila"
 mkdir backups
 
-docker pull postgres:12-alpine > /dev/null 2>&1
+docker pull postgres:15-alpine > /dev/null 2>&1
 
 echo
 echo "Backing up Pagila database..."
 
-docker run --net=host --rm -v $PWD/backups:/backups/ -e PGPASSWORD=$PAGILA_PASSWORD postgres:12-alpine pg_dump -h $PAGILA_HOST -p 5432 -U $PAGILA_USERNAME --create $databaseName --file /backups/pagila.sql
+docker run --net=host --rm -v "$PWD"/backups:/backups/ -e PGPASSWORD="$PAGILA_PASSWORD" postgres:15-alpine pg_dump -h "$PAGILA_HOST" -p 5432 -U "$PAGILA_USERNAME" --no-owner -f /backups/pagila.sql
 
 echo "Creating Spawn data image..."
 echo
 
-pagilaImageName=$(spawnctl create data-image --file ./pagila-backup.yaml --lifetime 336h --accessToken $SPAWNCTL_ACCESS_TOKEN -q)
+pagilaImageName=$(spawnctl create data-image --file ./pagila-backup.yaml --lifetime 336h --accessToken "$SPAWNCTL_ACCESS_TOKEN" -q)
 
 echo "Successfully created Spawn data image '$pagilaImageName'"
 echo

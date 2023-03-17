@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata:
+  License: Apache-2.0
+Description: 'Creates a Postgres RDS instance'
+Parameters:
+  DBName:
+    Description: The database name
+    Type: String
+    MinLength: '1'
+    MaxLength: '64'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric
+      characters.
+  DBUser:
+    Default: 'postgres'
+    NoEcho: 'true'
+    Description: The database admin account username
+    Type: String
+    MinLength: '1'
+    MaxLength: '16'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+  DBPassword:
+    NoEcho: 'true'
+    Description: The database admin account password
+    Type: String
+    MinLength: '1'
+    MaxLength: '41'
+    AllowedPattern: '[a-zA-Z0-9]+'
+    ConstraintDescription: must contain only alphanumeric characters.
+  DBAllocatedStorage:
+    Default: '5'
+    Description: The size of the database (Gb)
+    Type: Number
+    MinValue: '5'
+    MaxValue: '1024'
+    ConstraintDescription: must be between 5 and 1024Gb.
+  DBInstanceClass:
+    Description: The database instance type
+    Type: String
+    Default: db.t3.small
+    ConstraintDescription: must select a valid database instance type for a given region.
+Resources:
+  Database:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref 'DBName'
+      DBInstanceIdentifier: !Sub '${DBName}-postgres'
+      AllocatedStorage: !Ref 'DBAllocatedStorage'
+      DBInstanceClass: !Ref 'DBInstanceClass'
+      Engine: postgres
+      MasterUsername: !Ref 'DBUser'
+      MasterUserPassword: !Ref 'DBPassword'
+      PubliclyAccessible: "true"
+    DeletionPolicy: Snapshot
+
+Outputs:
+  DatabaseAJDBCConnectionString:
+    Description: JDBC connection string for the master database
+    Value: !Join ['', ['jdbc:postgresql://', !GetAtt [Database, Endpoint.Address], ':',
+                       !GetAtt [Database, Endpoint.Port], /, !Ref 'DBName']]
