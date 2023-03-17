@@ -1,0 +1,7 @@
+sourceType: empty
+name: postgres-empty-13
+engine: postgresql
+version: 13.2
+tags:
+  - prod
+  - latest

@@ -1,0 +1,32 @@
+default_config:
+  mode: MASKING
+
+cycle_resolution_strategy: DELETE_NOT_REQUIRED
+table_truncation_mode: TRUNCATE
+schema_creation_mode: DO_NOT_CREATE
+safety_mode: "RELAXED"
+
+tables:
+  - table_name_with_schema: "public.staff"
+    transformations:
+      - columns: [ "first_name", "last_name", "email", "username" ]
+        params:
+          type: "person_generator"
+          column_templates: [ "${first_name}", "${last_name}", "${email}", "${first_name}" ]
+      - columns: [ "password" ]
+        params:
+          type: "passthrough"
+
+  - table_name_with_schema: "public.customer"
+    transformations:
+      - columns: [ "first_name", "last_name", "email" ]
+        params:
+          type: "person_generator"
+          column_templates: [ "${first_name}", "${last_name}", "${email}" ]
+
+  - table_name_with_schema: "public.address"
+    transformations:
+      - columns: [ "address", "postal_code" ]
+        params:
+          type: "address_generator"
+          column_templates: [ "${house_number} ${street_name}", "${zip_code}" ]
